@@ -57,9 +57,10 @@ class RegressionHead(nn.Module):
         # (N,h,w,3)
 
         # compute sum of attention
-        norm = attn_weight_rw.sum(-1, keepdim=True)  # (N,h,w,1)
+        norm = attn_weight_rw.sum(-1, keepdim=True)
+        # (N,h,w,1)
         if occ_mask is None:
-            norm[norm < 0.1] = 1.0  # 代表 occlusion
+            norm[norm < 0.1] = 1.0  # 代表 occlusion 0.1
         else:
             norm[occ_mask, :] = 1.0  # set occluded region norm to be 1.0 to avoid division by 0
 
@@ -244,7 +245,8 @@ class RegressionHead(nn.Module):
         # normalize attention to 0-1
         if self.ot:  # this one
             # (N,H/3,W/3,W/3)
-            attn_ot = self._optimal_transport(attn_weight, 10)  # (N,h,w+1,w+1)
+            attn_ot = self._optimal_transport(attn_weight, 10)
+            # (N,h,w+1,w+1) 1 for occlusion
         else:
             # softmax
             attn_ot = self._softmax(attn_weight)

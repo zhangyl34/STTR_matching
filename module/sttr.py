@@ -76,9 +76,11 @@ class STTR(nn.Module):
         bs, _, h, w = x.left.size()  # N,3,H,W
 
         # extract features
-        feat = self.backbone(x)
-        tokens = self.tokenizer(feat)  # (2N,128,H,W)
-        pos_enc = self.pos_encoder(x)  # (2w-1,128) 间隔 3 采样
+        feat = self.backbone(x)        # 巻积
+        tokens = self.tokenizer(feat)  # DenseNet
+        # (2N,128,H,W)
+        pos_enc = self.pos_encoder(x)
+        # (2w-1,128) 间隔 3 采样，从 w-1 到 1-w
 
         # separate left and right
         feat_left = tokens[:bs]   # (N,128,H,W)
